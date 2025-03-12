@@ -3,6 +3,7 @@ AI essential class final project source code
 
 # Create Visual Environment
 python -m venv venv
+
 .\venv\Scripts\activate
 
 # Install requirements
