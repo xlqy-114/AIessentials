@@ -7,7 +7,9 @@ python -m venv venv
 
 # Install requirements
 pip install -r requirements.txt
+
 pip install streamlit pymupdf pdfplumber langchain-text-splitters openai numpy python-dotenv scikit-learn
+
 pip install --force-reinstall langchain-text-splitters
 
 # Environment Check
