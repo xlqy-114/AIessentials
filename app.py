@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-# Document Q&A System with DeepSeek API
+# Q&A System with DeepSeek API
 import streamlit as st
 import fitz  # PyMuPDF
 import pdfplumber
@@ -12,7 +11,7 @@ from dotenv import load_dotenv
 from sklearn.feature_extraction.text import TfidfVectorizer
 import re
 
-# ================== Environment Setup ==================
+# Environment Setup
 load_dotenv()
 
 client = OpenAI(
@@ -20,7 +19,7 @@ client = OpenAI(
     base_url="https://api.siliconflow.cn/v1"
 )
 
-# ================== UI Configuration ==================
+# UI Configuration
 with st.sidebar:
     st.header("📄 Document Settings")
     
@@ -43,7 +42,7 @@ with st.sidebar:
 
     history_limit = st.slider("Chat History Limit", 3, 30, 5)
     
-    # ========== Model Selection ==========
+    # Model Selection 
     st.header("🚀 Model Settings")
     model_choice = st.selectbox(
         "Select AI Model",
@@ -57,7 +56,7 @@ with st.sidebar:
     }
     st.session_state.selected_model, model_version = model_id_mapping[model_choice]
 
-# ================== Document Processing ==================
+# Document Processing
 def process_documents(files):
     """Extract text and tables with structure preservation"""
     docs = {}
@@ -122,7 +121,7 @@ def process_documents(files):
     
     return docs
 
-# ================== Context Retrieval ==================
+# Context Retrieval
 def find_relevant_chunks(query, docs, top_k=3):
     """TF-IDF based text chunk retrieval"""
     all_chunks = [chunk for doc_chunks in docs.values() for chunk in doc_chunks]
@@ -136,7 +135,7 @@ def find_relevant_chunks(query, docs, top_k=3):
     
     return [all_chunks[i] for i in top_indices]
 
-# ================== Main Interface ==================
+# Main Interface
 st.title("📚 DeepSeek Document Q&A System")
 
 # Initialize conversation history
@@ -152,7 +151,7 @@ for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-# ================== Document Handling ==================
+# Document Handling
 if uploaded_files:
     current_hash = hashlib.md5(str(uploaded_files).encode()).hexdigest()
     if "file_hash" not in st.session_state or st.session_state.file_hash != current_hash:
@@ -165,7 +164,7 @@ if uploaded_files:
     with st.sidebar:
         selected_doc = st.selectbox("Search Scope", ["All Documents"] + list(st.session_state.docs.keys()))
 
-# ================== Query Processing ==================
+# Query Processing
 if user_query := st.chat_input("Ask your question"):
     if not uploaded_files:
         st.warning("⚠️ Please upload PDF documents first")
@@ -185,7 +184,7 @@ if user_query := st.chat_input("Ask your question"):
     system_prompt = {
         "role": "system",
         "content": f'''You are DeepSeek AI Assistant ({model_choice} version). Key instructions:
-1. When asked about your identity: "I'm an AI assistant developed by DeepSeek (深度求索), using our proprietary {model_choice} model."
+1. When asked about your identity: "I'm an AI assistant developed by DeepSeek, using our proprietary {model_choice} model."
 2. Always reference: 
 {''.join(relevant_chunks)}
 
